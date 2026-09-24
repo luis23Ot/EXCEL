@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Control de Consumibles por OT</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Paleta basada en el diseño azul pizarra (Slate Blue) */
+  --bg: #293b4c;
+  --card: #344a5f;
+  --primary: #0d2235; /* Azul oscuro noche para botones */
+  --primary-hover: #07131e;
+  --text: #ffffff;
+  --muted: #a3b8cc;
+  --border: rgba(255, 255, 255, 0.08);
+  --input-bg: rgba(255, 255, 255, 0.06);
+  --input-hover: rgba(255, 255, 255, 0.1);
+  --danger: #ef4444;
+  --danger-bg: rgba(239, 68, 68, 0.15);
+  --ok: #10b981;
+  --ok-bg: rgba(16, 185, 129, 0.15);
+  --warn: #f59e0b;
+  --warn-bg: rgba(245, 158, 11, 0.15);
+  --secondary: rgba(0, 0, 0, 0.15);
+  --secondary-hover: rgba(0, 0, 0, 0.25);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Poppins', Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+header {
+  padding: 30px 32px 10px;
+  text-align: center;
+}
+
+header h1 { margin: 0 0 6px; font-size: 26px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #fff; }
+header p { margin: 0; color: var(--muted); font-size: 13px; letter-spacing: 0.5px; }
+
+.container { max-width: 1300px; margin: 16px auto 40px; padding: 0 16px; }
+.grid { display: grid; grid-template-columns: 380px 1fr; gap: 24px; }
+
+.card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 30px 24px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Efecto de onda sutil en el fondo de las tarjetas (opcional para dar el toque de la imagen) */
+.card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 120px;
+  background: linear-gradient(to top, rgba(13, 34, 53, 0.15), transparent);
+  pointer-events: none;
+  border-radius: 0 0 16px 16px;
+}
+
+h2 { font-size: 16px; margin: 0 0 24px; font-weight: 600; color: #fff; text-align: center; text-transform: uppercase; letter-spacing: 1.5px; }
+
+label { display: block; font-weight: 500; font-size: 11px; margin: 16px 0 6px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; padding-left: 4px; }
+
+input, select, button { font: inherit; }
+
+input, select {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: var(--input-bg);
+  color: var(--text);
+  transition: all 0.3s ease;
+  font-size: 13px;
+}
+
+input:focus, select:focus {
+  outline: none;
+  background: var(--input-hover);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+input::placeholder { color: rgba(255,255,255,0.4); }
+
+button {
+  border: 0;
+  border-radius: 30px; /* Botones tipo píldora */
+  padding: 14px 24px;
+  cursor: pointer;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.primary { background: var(--primary); color: #fff; box-shadow: 0 6px 15px rgba(13, 34, 53, 0.4); }
+.primary:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(13, 34, 53, 0.6); }
+
+.secondary { background: var(--secondary); color: var(--text); }
+.secondary:hover { background: var(--secondary-hover); }
+
+.danger { background: rgba(239, 68, 68, 0.1); color: #ff6b6b; border: 1px solid transparent; }
+.danger:hover { background: var(--danger); color: #fff; }
+
+.actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; z-index: 2; position: relative; }
+.actions button { flex: 1; } 
+
+.hidden { display: none !important; }
+
+.notice { padding: 12px 16px; border-radius: 8px; font-size: 13px; margin-top: 14px; text-align: center; font-weight: 500; background: rgba(0,0,0,0.2); }
+.notice.ok { color: var(--ok); }
+.notice.warn { color: var(--warn); }
+.notice.error { color: #ff6b6b; }
+
+.filters { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 12px; align-items: end; background: rgba(0,0,0,0.1); padding: 20px; border-radius: 12px; margin-bottom: 24px; z-index: 2; position: relative; }
+.filters label { margin-top: 0; }
+
+table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; }
+th, td { padding: 14px 12px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: middle; }
+th { background: rgba(0,0,0,0.15); position: sticky; top: 0; font-weight: 500; color: var(--muted); text-transform: uppercase; font-size: 11px; letter-spacing: 1px; z-index: 10; border-bottom: none; }
+th:first-child { border-top-left-radius: 8px; }
+th:last-child { border-top-right-radius: 8px; }
+tbody tr { transition: background 0.2s; }
+tbody tr:hover { background: rgba(255,255,255,0.03); }
+
+.table-wrap { max-height: 500px; overflow-x: auto; overflow-y: auto; -webkit-overflow-scrolling: touch; border-radius: 8px; background: rgba(0,0,0,0.05); z-index: 2; position: relative; }
+
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; z-index: 2; position: relative; }
+.stat { background: rgba(0,0,0,0.1); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.stat b { font-size: 28px; color: #fff; font-weight: 600; line-height: 1; margin-bottom: 8px; }
+.stat span { font-size: 11px; color: var(--muted); text-transform: uppercase; font-weight: 500; letter-spacing: 1px; }
+
+.small { font-size: 12px; color: var(--muted); text-align: center; display: block; margin-top: 10px; }
+
+.consumible-row { display: grid; grid-template-columns: minmax(0, 1fr) 110px 45px; gap: 10px; margin-bottom: 12px; align-items: center; z-index: 2; position: relative; }
+.consumible-row input { margin: 0; width: 100%; }
+.btn-remove { background: rgba(255, 107, 107, 0.1); color: #ff6b6b; padding: 0; height: 46px; border-radius: 50%; width: 46px; display: flex; align-items: center; justify-content: center; font-size: 20px; line-height: 1; flex-shrink: 0; margin-left: auto; }
+.btn-remove:hover { background: #ff6b6b; color: #fff; }
+
+hr { border: 0; border-top: 1px solid var(--border); margin: 32px 0; z-index: 2; position: relative; }
+
+td.light { color: var(--muted); font-size: 12px; }
+td b { color: #fff; font-size: 13px; font-weight: 500; }
+td .highlight { background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+
+/* OPTIMIZACIONES PARA MÓVILES */
+@media(max-width: 900px){ 
+  .grid { grid-template-columns: 1fr; gap: 20px; } 
+}
+
+@media(max-width: 600px){ 
+  header { padding: 20px 16px 5px; }
+  header h1 { font-size: 20px; }
+  .container { margin: 10px auto 20px; padding: 0 12px; }
+  .card { padding: 24px 16px; border-radius: 12px; }
+  
+  .filters { grid-template-columns: 1fr; gap: 12px; padding: 16px; }
+  .stats { grid-template-columns: 1fr 1fr; gap: 12px; } 
+  .stats div:nth-child(3) { grid-column: span 2; } 
+  
+  .consumible-row { grid-template-columns: 1fr 85px 42px; gap: 8px; }
+  .btn-remove { width: 42px; height: 42px; }
+  
+  .actions { flex-direction: column; gap: 10px; margin-top: 20px; }
+  .actions button { width: 100%; }
+  
+  table { white-space: nowrap; } 
+  th, td { padding: 12px 10px; font-size: 12px; }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>Control de Consumibles</h1>
+  <p>Panel de Gestión y Registros</p>
+</header>
+
+<div class="container">
+<div class="grid">
+
+<section class="card">
+  <h2>REGISTRAR ACTIVIDAD</h2>
+
+  <label for="fecha">Fecha</label>
+  <input type="date" id="fecha">
+
+  <label for="ot">Número de OT</label>
+  <input id="ot" list="otList" placeholder="Ej. M-780..." autocomplete="off">
+  <datalist id="otList"></datalist>
+
+  <label for="actividad">Actividad / Área</label>
+  <input id="actividad" list="actividadList" placeholder="Ej. ELECTRICO..." autocomplete="off">
+  <datalist id="actividadList"></datalist>
+  
+  <label for="solicitante">Técnico / Solicitante</label>
+  <input id="solicitante" list="solicitanteList" placeholder="Nombre..." autocomplete="off">
+  <datalist id="solicitanteList"></datalist>
+
+  <label style="margin-top: 24px;">Consumibles</label>
+  <div id="consumiblesContainer"></div>
+  <datalist id="consumibleList"></datalist>
+
+  <div class="actions" style="margin-top: 12px;">
+    <button class="secondary" id="agregarConsumible" type="button">+ Agregar Fila</button>
+  </div>
+
+  <hr>
+
+  <div class="actions">
+    <button class="primary" id="guardar" type="button">Guardar Registro</button>
+  </div>
+  <div class="actions" style="margin-top: 12px;">
+    <button class="secondary" id="limpiar" type="button">Limpiar Campos</button>
+  </div>
+
+  <div id="mensaje" class="notice hidden"></div>
+
+  <hr>
+  <h2>Gestión de Datos</h2>
+  <div class="actions">
+    <button class="secondary" id="exportar" type="button">Exportar CSV</button>
+  </div>
+  <div class="actions" style="margin-top: 12px;">
+    <button class="danger" id="borrarTodo" type="button">Purgar Historial</button>
+  </div>
+</section>
+
+<section class="card">
+  <h2>HISTORIAL GENERAL</h2>
+
+  <div class="stats">
+    <div class="stat"><b id="nRegistros">0</b><span>Registros</span></div>
+    <div class="stat"><b id="nOT">0</b><span>OTs</span></div>
+    <div class="stat"><b id="nCant">0</b><span>Materiales</span></div>
+  </div>
+
+  <div class="filters">
+    <div><label>Fecha</label><input type="date" id="fFecha"></div>
+    <div><label>Buscar OT</label><input id="fOT" placeholder="OT..."></div>
+    <div><label>Material</label><input id="fCons" placeholder="Consumible..."></div>
+    <button class="secondary" id="limpiarFiltros" type="button" style="border-radius: 8px;">Limpiar</button>
+  </div>
+
+  <div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Fecha / Hora</th>
+        <th>OT</th>
+        <th>Actividad</th>
+        <th>Técnico</th>
+        <th>Material</th>
+        <th>Cant.</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="tabla"></tbody>
+  </table>
+  </div>
+  <p id="sinDatos" class="small" style="margin-top: 20px;">No hay registros almacenados.</p>
+</section>
+
+</div>
+</div>
+
+<script>
+const DB_NAME='MantenimientoConsumiblesDB', DB_VERSION=1, STORE='consumos';
+let db;
+const $=id=>document.getElementById(id);
+
+function hoy(){
+  const d=new Date(), off=d.getTimezoneOffset();
+  return new Date(d.getTime()-off*60000).toISOString().slice(0,10);
+}
+$('fecha').value=hoy();$('fFecha').value=hoy();
+
+function abrirDB(){
+ return new Promise((resolve,reject)=>{
+  const req=indexedDB.open(DB_NAME,DB_VERSION);
+  req.onupgradeneeded=e=>{
+    const d=e.target.result;
+    if(!d.objectStoreNames.contains(STORE)){
+      const s=d.createObjectStore(STORE,{keyPath:'id',autoIncrement:true});
+      s.createIndex('fecha','fecha',{});
+      s.createIndex('ot','ot',{});
+      s.createIndex('actividadKey',['ot','actividad'],{unique:false});
+    }
+  };
+  req.onsuccess=e=>{db=e.target.result;resolve()};
+  req.onerror=()=>reject(req.error);
+ });
+}
+function allRecords(){
+ return new Promise((resolve,reject)=>{
+  const req=db.transaction(STORE,'readonly').objectStore(STORE).getAll();
+  req.onsuccess=()=>resolve(req.result); req.onerror=()=>reject(req.error);
+ });
+}
+function addRecord(x){
+ return new Promise((resolve,reject)=>{
+  const req=db.transaction(STORE,'readwrite').objectStore(STORE).add(x);
+  req.onsuccess=()=>resolve(req.result); req.onerror=()=>reject(req.error);
+ });
+}
+function delRecord(id){
+ return new Promise((resolve,reject)=>{
+  const req=db.transaction(STORE,'readwrite').objectStore(STORE).delete(id);
+  req.onsuccess=resolve; req.onerror=()=>reject(req.error);
+ });
+}
+function clearDB(){
+ return new Promise((resolve,reject)=>{
+  const req=db.transaction(STORE,'readwrite').objectStore(STORE).clear();
+  req.onsuccess=resolve; req.onerror=()=>reject(req.error);
+ });
+}
+
+function msg(text,type=''){
+ $('mensaje').textContent=text; $('mensaje').className='notice '+type;
+ $('mensaje').classList.remove('hidden');
+ setTimeout(()=> $('mensaje').classList.add('hidden'),4000);
+}
+function norm(v){return String(v||'').trim().toLowerCase()}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+async function actualizarListas(){
+ const data = await allRecords();
+ 
+ const ots = [...new Set(data.map(x=>x.ot))].sort();
+ $('otList').innerHTML = ots.map(x=>`<option value="${esc(x)}">`).join('');
+ 
+ const acts = [...new Set(data.map(x=>x.actividad))].sort();
+ $('actividadList').innerHTML = acts.map(x=>`<option value="${esc(x)}">`).join('');
+ 
+ const sols = [...new Set(data.map(x=>x.solicitante).filter(Boolean))].sort();
+ $('solicitanteList').innerHTML = sols.map(x=>`<option value="${esc(x)}">`).join('');
+ 
+ const cons = [...new Set(data.map(x=>x.consumible))].sort();
+ $('consumibleList').innerHTML = cons.map(x=>`<option value="${esc(x)}">`).join('');
+}
+
+$('ot').addEventListener('change', async () => {
+  const val = norm($('ot').value);
+  if (!val) return;
+  const data = await allRecords();
+  const matches = data.filter(x => norm(x.ot) === val);
+  
+  const acts = [...new Set(matches.map(x => x.actividad))];
+  if (acts.length === 1 && !$('actividad').value)$('actividad').value = acts[0];
+  
+  const sols = [...new Set(matches.map(x => x.solicitante).filter(Boolean))];
+  if (sols.length === 1 && !$('solicitante').value)$('solicitante').value = sols[0];
+});
+
+$('actividad').addEventListener('change', async () => {
+  const val = norm($('actividad').value);
+  if (!val) return;
+  const data = await allRecords();
+  const matches = data.filter(x => norm(x.actividad) === val);
+  
+  const ots = [...new Set(matches.map(x => x.ot))];
+  if (ots.length === 1 && !$('ot').value)$('ot').value = ots[0];
+});
+
+async function render(){
+ let data=await allRecords();
+ const ff=$('fFecha').value, fo=norm($('fOT').value), fc=norm($('fCons').value);
+ data=data.filter(x=>(!ff||x.fecha===ff)&&(!fo||norm(x.ot).includes(fo))&&(!fc||norm(x.consumible).includes(fc)));
+ data.sort((a,b)=>b.timestamp-a.timestamp);
+ $('tabla').innerHTML=data.map(x=>`
+ <tr>
+  <td class="light">${esc(x.fecha)}<br><span style="opacity:0.7">${new Date(x.timestamp).toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit'})}</span></td>
+  <td><b>${esc(x.ot)}</b></td>
+  <td>${esc(x.actividad)}</td>
+  <td>${esc(x.solicitante||'')}</td>
+  <td style="color:#fff;">${esc(x.consumible)}</td>
+  <td><span class="highlight">${x.cantidad}</span></td>
+  <td><button class="danger" style="padding: 6px 12px; font-size:11px; border-radius:15px; margin:0;" onclick="eliminar(${x.id})">Borrar</button></td>
+ </tr>`).join('');
+ $('sinDatos').classList.toggle('hidden',data.length>0);$('nRegistros').textContent=data.length;
+ $('nOT').textContent=new Set(data.map(x=>x.ot)).size;
+ $('nCant').textContent=data.reduce((s,x)=>s+Number(x.cantidad),0).toLocaleString('es-PE',{maximumFractionDigits:3});
+}
+async function eliminar(id){
+ if(!confirm('¿Eliminar este registro de forma permanente?')) return;
+ await delRecord(id); await render(); await actualizarListas();
+ msg('Registro eliminado.','ok');
+}
+window.eliminar=eliminar;
+
+function crearFilaConsumible() {
+ const row=document.createElement('div');
+ row.className='consumible-row';
+ row.innerHTML=`
+   <div>
+     <input class="consumible-input" list="consumibleList" placeholder="Ej. Tyvek, Guante...">
+   </div>
+   <div>
+     <input class="cantidad-input" type="number" min="0.001" step="0.001" placeholder="Cant.">
+   </div>
+   <button type="button" class="btn-remove" title="Quitar fila">×</button>`;
+ row.querySelector('.btn-remove').onclick=()=>{
+   const rows=document.querySelectorAll('.consumible-row');
+   if(rows.length===1){
+     row.querySelector('.consumible-input').value='';
+     row.querySelector('.cantidad-input').value='';
+   }else row.remove();
+ };
+ $('consumiblesContainer').appendChild(row);
+}
+
+function inicializarConsumibles(){
+ $('consumiblesContainer').innerHTML='';
+ crearFilaConsumible();
+}
+
+$('agregarConsumible').onclick=()=>crearFilaConsumible();
+
+$('guardar').onclick=async()=>{
+ const fecha=$('fecha').value, ot=$('ot').value.trim(), solicitante=$('solicitante').value.trim(), actividad=$('actividad').value.trim();
+ const filas=[...document.querySelectorAll('.consumible-row')];
+ const items=filas.map(r=>({
+   consumible:r.querySelector('.consumible-input').value.trim(),
+   cantidad:Number(r.querySelector('.cantidad-input').value)
+ })).filter(x=>x.consumible||x.cantidad);
+
+ if(!fecha||!ot||!actividad||!solicitante||!items.length){
+   msg('Completa Fecha, OT, Actividad, Técnico y 1 material.','warn'); return;
+ }
+ if(items.some(x=>!x.consumible||!x.cantidad||x.cantidad<=0)){
+   msg('Todos los materiales deben tener nombre y cantidad.','error'); return;
+ }
+
+ for(const item of items){
+   await addRecord({fecha,ot,actividad,solicitante,consumible:item.consumible,cantidad:item.cantidad,timestamp:Date.now()});
+ }
+ msg(`Guardado: ${items.length} registro(s).`,'ok');
+ inicializarConsumibles();
+ await actualizarListas(); await render();
+};
+
+$('limpiar').onclick=()=>{
+ $('fecha').value=hoy();$('ot').value='';$('solicitante').value='';$('actividad').value='';
+ inicializarConsumibles();
+};
+['fFecha','fOT','fCons'].forEach(id=>$(id).addEventListener('input',render));
+$('limpiarFiltros').onclick=()=>{$('fFecha').value='';$('fOT').value='';$('fCons').value='';render()};
+
+$('exportar').onclick=async()=>{
+ const data=await allRecords(); if(!data.length){msg('No hay datos para exportar.','warn');return}
+ 
+ data.sort((a,b)=>{
+   if (a.fecha !== b.fecha) return a.fecha.localeCompare(b.fecha);
+   if (a.actividad !== b.actividad) return a.actividad.localeCompare(b.actividad);
+   return a.timestamp - b.timestamp;
+ });
+
+ const head=['Fecha','OT','Actividad','Solicitante','Consumible','Cantidad','Hora Sistema'];
+ let rows = [];
+ let grupoActual = '';
+
+ data.forEach(x => {
+   let grupo = x.fecha + '|' + x.actividad;
+   if (grupoActual !== '' && grupoActual !== grupo) {
+     rows.push(['','','','','','','']);
+   }
+   grupoActual = grupo;
+   
+   let fechaFormateada = new Date(x.timestamp).toLocaleTimeString('es-PE');
+   rows.push([x.fecha, x.ot, x.actividad, x.solicitante||'', x.consumible, x.cantidad, fechaFormateada]);
+ });
+
+ const csv='\ufeff'+[head,...rows].map(r=>
+   r.map(v=> v === '' ? '' : `"${String(v).replace(/"/g,'""')}"`).join(',')
+ ).join('\n');
+ 
+ const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+ const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Data_Consumibles_'+hoy()+'.csv';a.click();URL.revokeObjectURL(a.href);
+};
+
+$('borrarTodo').onclick=async()=>{
+ if(!confirm('ADVERTENCIA: Se eliminará todo el historial local. ¿Continuar?'))return;
+ if(!confirm('Última confirmación: ¿Purgar base de datos?'))return;
+ await clearDB(); await render(); await actualizarListas(); msg('Base de datos purgada.','ok');
+};
+
+(async()=>{
+  inicializarConsumibles();
+  await abrirDB();
+  await actualizarListas();
+  await render();
+})().catch(e=>msg('Error de base de datos: '+e.message,'error'));
+</script>
+</body>
+</html>
+```<FollowUp><ElicitationsGroup></ElicitationsGroup></FollowUp>
