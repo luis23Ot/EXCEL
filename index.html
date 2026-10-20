@@ -26,43 +26,20 @@
 
 * { box-sizing: border-box; }
 
-body {
-  margin: 0;
-  font-family: 'Poppins', Arial, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-}
-
+body { margin: 0; font-family: 'Poppins', Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; -webkit-font-smoothing: antialiased; }
 header { padding: 30px 32px 10px; text-align: center; }
 header h1 { margin: 0 0 6px; font-size: 26px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #fff; }
 header p { margin: 0; color: var(--muted); font-size: 13px; letter-spacing: 0.5px; }
-
 .container { max-width: 1300px; margin: 16px auto 40px; padding: 0 16px; }
 .grid { display: grid; grid-template-columns: 420px 1fr; gap: 24px; }
-
-.card {
-  background: var(--card);
-  border-radius: 16px;
-  padding: 30px 24px;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-}
-
+.card { background: var(--card); border-radius: 16px; padding: 30px 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
 h2 { font-size: 16px; margin: 0 0 24px; font-weight: 600; color: #fff; text-align: center; text-transform: uppercase; letter-spacing: 1.5px; }
 label { display: block; font-weight: 500; font-size: 11px; margin: 16px 0 6px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; padding-left: 4px; }
-
 input, select, button { font: inherit; }
 input, select { width: 100%; padding: 14px 16px; border: 1px solid transparent; border-radius: 8px; background: var(--input-bg); color: var(--text); font-size: 13px; transition: all 0.3s ease; }
 input:focus, select:focus { outline: none; background: var(--input-hover); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
 input::placeholder { color: rgba(255,255,255,0.4); }
-
-/* CORRECCIÓN: Fondo oscuro para las opciones de las listas desplegables */
-option {
-  background-color: var(--card);
-  color: #ffffff;
-}
-
+option { background-color: var(--card); color: #ffffff; }
 button { border: 0; border-radius: 30px; padding: 14px 24px; cursor: pointer; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease; font-size: 13px; display: flex; align-items: center; justify-content: center; }
 .primary { background: var(--primary); color: #fff; box-shadow: 0 6px 15px rgba(13, 34, 53, 0.4); }
 .primary:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(13, 34, 53, 0.6); }
@@ -70,32 +47,26 @@ button { border: 0; border-radius: 30px; padding: 14px 24px; cursor: pointer; fo
 .secondary:hover { background: var(--secondary-hover); }
 .danger { background: rgba(239, 68, 68, 0.1); color: #ff6b6b; }
 .danger:hover { background: var(--danger); color: #fff; }
-
 .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
 .actions button { flex: 1; }
 .hidden { display: none !important; }
-
 .notice { padding: 12px 16px; border-radius: 8px; font-size: 13px; margin-top: 14px; text-align: center; font-weight: 500; background: rgba(0,0,0,0.2); }
 .notice.ok { color: var(--ok); }
 .notice.warn { color: var(--warn); }
 .notice.error { color: #ff6b6b; }
-
 .personal-grid { background: rgba(0,0,0,0.1); padding: 15px; border-radius: 12px; margin-top: 20px; border: 1px solid var(--border); }
 .personal-grid label { margin-top: 10px; }
 .personal-grid label:first-child { margin-top: 0; }
-
 .consumible-row { display: grid; grid-template-columns: minmax(0, 1fr) 80px 85px 45px; gap: 8px; margin-bottom: 12px; align-items: center; }
 .consumible-row input, .consumible-row select { margin: 0; width: 100%; padding: 14px 8px; }
 .btn-remove { background: rgba(255, 107, 107, 0.1); color: #ff6b6b; padding: 0; height: 46px; border-radius: 50%; width: 46px; display: flex; align-items: center; justify-content: center; font-size: 20px; line-height: 1; flex-shrink: 0; margin-left: auto; }
 .btn-remove:hover { background: #ff6b6b; color: #fff; }
-
 table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; }
 th, td { padding: 14px 12px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: middle; }
 th { background: rgba(0,0,0,0.15); position: sticky; top: 0; font-weight: 500; color: var(--muted); text-transform: uppercase; font-size: 11px; letter-spacing: 1px; z-index: 10; border-bottom: none; }
 th:first-child { border-top-left-radius: 8px; }
 th:last-child { border-top-right-radius: 8px; }
 tbody tr:hover { background: rgba(255,255,255,0.03); }
-
 .table-wrap { max-height: 600px; overflow-x: auto; overflow-y: auto; border-radius: 8px; background: rgba(0,0,0,0.05); }
 
 @media(max-width: 900px){ .grid { grid-template-columns: 1fr; gap: 20px; } }
@@ -122,12 +93,11 @@ tbody tr:hover { background: rgba(255,255,255,0.03); }
   <input type="date" id="fecha">
 
   <label>Número de OT</label>
-  <input id="ot" list="otList" placeholder="Ej. M-780..." autocomplete="off">
+  <input id="ot" list="otList" placeholder="Ej. E-780..." autocomplete="off">
   <datalist id="otList"></datalist>
 
   <label>Actividad / Área</label>
-  <input id="actividad" list="actividadList" placeholder="Ej. ELECTRICO..." autocomplete="off">
-  <datalist id="actividadList"></datalist>
+  <input id="actividad" placeholder="Ej. MANTENIMIENTO TABLERO..." autocomplete="off">
 
   <div class="personal-grid">
     <label>Retirado por</label>
@@ -148,7 +118,6 @@ tbody tr:hover { background: rgba(255,255,255,0.03); }
 
   <label style="margin-top: 24px;">Materiales y Consumibles</label>
   <div id="consumiblesContainer"></div>
-  <datalist id="consumibleList"></datalist>
 
   <div class="actions" style="margin-top: 12px;">
     <button class="secondary" id="agregarConsumible" type="button">+ Agregar Fila</button>
@@ -193,6 +162,7 @@ const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbxXtWAMYinkM-BnaAN_2
 
 const DB_NAME='MantenimientoConsumiblesDB_v3', DB_VERSION=3, STORE='consumos';
 let db;
+let mapaOTs = {}; // <--- Variable para almacenar las OTs y sus Actividades
 const $=id=>document.getElementById(id);
 
 function hoy(){
@@ -221,7 +191,7 @@ function msg(text,type=''){
  setTimeout(()=> $('mensaje').classList.add('hidden'),4000);
 }
 
-// Cargar listas usando JSONP (Esquiva el error de CORS al leer)
+// Cargar listas usando JSONP
 function cargarListasDesdeSheets() {
   const script = document.createElement('script');
   script.src = URL_SCRIPT + '?callback=procesarListas';
@@ -229,12 +199,10 @@ function cargarListasDesdeSheets() {
     $('retiradoPor').innerHTML = '<option value="">Fallo al cargar</option>';
     $('autorizadoPor').innerHTML = '<option value="">Fallo al cargar</option>';
     $('despachadoPor').innerHTML = '<option value="">Fallo al cargar</option>';
-    msg('No se pudieron descargar los nombres de la base de datos.', 'error');
   };
   document.body.appendChild(script);
 }
 
-// Esta función procesa los nombres cuando Sheets responde
 window.procesarListas = function(data) {
   const llenarSelect = (id, lista) => {
     const select = $(id);
@@ -244,13 +212,46 @@ window.procesarListas = function(data) {
   llenarSelect('retiradoPor', data.retiradores);
   llenarSelect('autorizadoPor', data.autorizadores);
   llenarSelect('despachadoPor', data.despachadores);
+  
+  // Guardar las OTs y llenar el desplegable de sugerencias
+  if (data.otData) {
+    mapaOTs = data.otData;
+    const otList = $('otList');
+    otList.innerHTML = '';
+    Object.keys(mapaOTs).forEach(ot => {
+      otList.innerHTML += `<option value="${ot}">`;
+    });
+  }
 };
+
+// ====================================================================
+// MAGIA: Autocompletar Actividad cuando se escribe/selecciona una OT
+// ====================================================================
+$('ot').addEventListener('input', async (e) => {
+  const otIngresada = e.target.value.trim().toUpperCase();
+  if (!otIngresada) return;
+
+  // 1. Prioridad: Buscar en la base de datos que bajó de Sheets
+  if (mapaOTs[otIngresada]) {
+    $('actividad').value = mapaOTs[otIngresada];
+    return;
+  }
+
+  // 2. Si no está en Sheets (es muy nueva), buscar en el historial local
+  const dataLocal = await allRecords();
+  const registroLocal = dataLocal.sort((a,b)=>b.timestamp-a.timestamp)
+                                 .find(x => x.ot.toUpperCase() === otIngresada && x.actividad);
+  if (registroLocal) {
+    $('actividad').value = registroLocal.actividad;
+  }
+});
+// ====================================================================
 
 function crearFilaConsumible() {
  const row=document.createElement('div');
  row.className='consumible-row';
  row.innerHTML=`
-   <div><input class="consumible-input" list="consumibleList" placeholder="Ej. Guante..."></div>
+   <div><input class="consumible-input" placeholder="Ej. Guante..."></div>
    <div><input class="cantidad-input" type="number" min="0.1" step="0.1" placeholder="Cant."></div>
    <div>
      <select class="unidad-input">
@@ -276,7 +277,6 @@ function crearFilaConsumible() {
 
 function inicializarConsumibles(){ $('consumiblesContainer').innerHTML=''; crearFilaConsumible(); }$('agregarConsumible').onclick=()=>crearFilaConsumible();
 
-// IndexedDB Funciones
 function allRecords(){ return new Promise((r,rj)=>{ const req=db.transaction(STORE,'readonly').objectStore(STORE).getAll(); req.onsuccess=()=>r(req.result); }); }
 function addRecord(x){ return new Promise((r,rj)=>{ const req=db.transaction(STORE,'readwrite').objectStore(STORE).add(x); req.onsuccess=()=>r(); }); }
 
@@ -294,7 +294,6 @@ async function render(){
  $('sinDatos').classList.toggle('hidden',data.length>0);
 }
 
-// POST Hacia Sheets y Guardado Local Inmediato
 $('guardar').onclick = async () => {
   const fecha = $('fecha').value, ot = $('ot').value.trim(), act =$('actividad').value.trim();
   const ret = $('retiradoPor').value, aut = $('autorizadoPor').value, desp =$('despachadoPor').value;
@@ -320,33 +319,31 @@ $('guardar').onclick = async () => {
   $('guardar').disabled = true;
 
   try {
-    // 1. GUARDAR LOCALMENTE PRIMERO (Aparece en la tabla instantáneamente)
     for (const item of payload) {
       item.timestamp = Date.now();
       await addRecord(item);
     }
     
-    // 2. ACTUALIZAR LA TABLA VISUAL
-    await render();
+    // Actualizar el mapa local inmediatamente para el autocompletado en futuras filas
+    mapaOTs[ot.toUpperCase()] = act; 
     
-    // 3. LIMPIAR EL FORMULARIO
-    $('ot').value = '';$('retiradoPor').value = ''; $('autorizadoPor').value = '';$('despachadoPor').value = '';
+    await render();
+    $('ot').value = ''; $('actividad').value = '';$('retiradoPor').value = ''; $('autorizadoPor').value = '';$('despachadoPor').value = '';
     inicializarConsumibles();
 
-    // 4. ENVIAR A GOOGLE SHEETS EN SEGUNDO PLANO (Evitando el bloqueo CORS)
     fetch(URL_SCRIPT, { 
       method: 'POST', 
       mode: 'no-cors', 
       body: JSON.stringify(payload), 
       headers: {'Content-Type': 'text/plain;charset=utf-8'} 
     }).then(() => {
-      msg('Guardado exitosamente en Local y Sheets.', 'ok');
-    }).catch((e) => {
-      msg('Guardado solo localmente (Revisa tu conexión).', 'warn');
+      msg('Guardado exitosamente.', 'ok');
+    }).catch(() => {
+      msg('Guardado localmente.', 'warn');
     });
 
   } catch (e) {
-    msg('Error procesando la base de datos local.', 'error');
+    msg('Error procesando.', 'error');
   } finally {
     $('guardar').disabled = false;
   }
