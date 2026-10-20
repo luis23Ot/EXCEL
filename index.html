@@ -217,30 +217,35 @@ function msg(text,type=''){
 }
 
 // Cargar listas desde Google Sheets (GET)
-async function cargarListasDesdeSheets() {
-  try {
-    const res = await fetch(URL_SCRIPT);
-    const data = await res.json();
-    
-    if(data.error) throw new Error(data.error);
-
-    const llenarSelect = (id, lista) => {
-      const select = $(id);
-      select.innerHTML = '<option value="">-- Seleccionar --</option>';
-      lista.forEach(nombre => select.innerHTML += `<option value="${nombre}">${nombre}</option>`);
-    };
-
-    llenarSelect('retiradoPor', data.retiradores);
-    llenarSelect('autorizadoPor', data.autorizadores);
-    llenarSelect('despachadoPor', data.despachadores);
-    
-  } catch(e) {
-    console.error("Error cargando personal:", e);
-    $('retiradoPor').innerHTML = '<option value="">Error de conexión</option>';
-    $('autorizadoPor').innerHTML = '<option value="">Error de conexión</option>';
-    $('despachadoPor').innerHTML = '<option value="">Error de conexión</option>';
-  }
+// Cargar listas usando JSONP (Esquiva el error de CORS)
+function cargarListasDesdeSheets() {
+  const script = document.createElement('script');
+  
+  // Agregamos ?callback=procesarListas al final de tu URL
+  script.src = URL_SCRIPT + '?callback=procesarListas';
+  
+  script.onerror = function() {
+    $('retiradoPor').innerHTML = '<option value="">Fallo al cargar</option>';
+    $('autorizadoPor').innerHTML = '<option value="">Fallo al cargar</option>';
+    $('despachadoPor').innerHTML = '<option value="">Fallo al cargar</option>';
+    msg('No se pudieron descargar los nombres de la base de datos.', 'error');
+  };
+  
+  document.body.appendChild(script);
 }
+
+// Esta función es llamada automáticamente por Google Apps Script al terminar la descarga
+window.procesarListas = function(data) {
+  const llenarSelect = (id, lista) => {
+    const select = $(id);
+    select.innerHTML = '<option value="">-- Seleccionar --</option>';
+    lista.forEach(nombre => select.innerHTML += `<option value="${nombre}">${nombre}</option>`);
+  };
+
+  llenarSelect('retiradoPor', data.retiradores);
+  llenarSelect('autorizadoPor', data.autorizadores);
+  llenarSelect('despachadoPor', data.despachadores);
+};
 
 function crearFilaConsumible() {
  const row=document.createElement('div');
