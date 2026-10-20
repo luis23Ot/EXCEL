@@ -182,7 +182,7 @@ tbody tr:hover { background: rgba(255,255,255,0.03); }
 
 <script>
 // =============== CONFIGURACIÓN ===============
-// PEGA TU URL DE APPS SCRIPT AQUÍ:
+// ENLACE DE TU GOOGLE APPS SCRIPT:
 const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbxNh_oBovlJHovjhyeVB8Dyv41f7s4fHWmY3-Rrev_fXX_3iRHrYHgAE_M-s7KF-3jD/exec';
 // =============================================
 
@@ -333,7 +333,7 @@ $('guardar').onclick=async()=>{
      inicializarConsumibles(); await render();
    } else throw new Error();
  } catch (e) {
-   msg('Error conectando a Sheets. Revisa la URL.', 'error');
+   msg('Error conectando a Sheets. Revisa la consola (F12).', 'error');
  } finally {
    $('guardar').disabled = false;
  }
@@ -347,6 +347,9 @@ $('limpiar').onclick=()=>{ $('fecha').value=hoy();$('ot').value=''; $('actividad
  cargarListasDesdeSheets();
  await render();
 })();
+</script>
+</body>
+</html>
 </script>
 </body>
 </html>
